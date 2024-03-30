@@ -2,9 +2,10 @@
 // Copyright 2023 George Norton (@george-norton)
 // SPDX-License-Identifier: GPL-2.0-or-later
 
+#include <string.h>
 #include "azoteq_iqs5xx.h"
-#include "pointing_device_internal.h"
 #include "wait.h"
+#include "pointing_device_internal.h"
 
 #ifndef AZOTEQ_IQS5XX_ADDRESS
 #    define AZOTEQ_IQS5XX_ADDRESS (0x74 << 1)
@@ -78,20 +79,6 @@
 #    define AZOTEQ_IQS5XX_ZOOM_CONSECUTIVE_DISTANCE 0x19
 #endif
 
-#if defined(AZOTEQ_IQS5XX_TPS43)
-#    define AZOTEQ_IQS5XX_WIDTH_MM 43
-#    define AZOTEQ_IQS5XX_HEIGHT_MM 40
-#    define AZOTEQ_IQS5XX_RESOLUTION_X 2048
-#    define AZOTEQ_IQS5XX_RESOLUTION_Y 1792
-#elif defined(AZOTEQ_IQS5XX_TPS65)
-#    define AZOTEQ_IQS5XX_WIDTH_MM 65
-#    define AZOTEQ_IQS5XX_HEIGHT_MM 49
-#    define AZOTEQ_IQS5XX_RESOLUTION_X 3072
-#    define AZOTEQ_IQS5XX_RESOLUTION_Y 2048
-#elif !defined(AZOTEQ_IQS5XX_WIDTH_MM) && !defined(AZOTEQ_IQS5XX_HEIGHT_MM)
-#    error "You must define one of the available azoteq trackpads or specify at least the width and height"
-#endif
-
 #define DIVIDE_UNSIGNED_ROUND(numerator, denominator) (((numerator) + ((denominator) / 2)) / (denominator))
 #define AZOTEQ_IQS5XX_INCH_TO_RESOLUTION_X(inch) (DIVIDE_UNSIGNED_ROUND((inch) * (uint32_t)AZOTEQ_IQS5XX_WIDTH_MM * 10, 254))
 #define AZOTEQ_IQS5XX_RESOLUTION_X_TO_INCH(px) (DIVIDE_UNSIGNED_ROUND((px) * (uint32_t)254, AZOTEQ_IQS5XX_WIDTH_MM * 10))
@@ -119,6 +106,18 @@ i2c_status_t azoteq_iqs5xx_end_session(void) {
 
 i2c_status_t azoteq_iqs5xx_get_base_data(azoteq_iqs5xx_base_data_t *base_data) {
     i2c_status_t status = i2c_readReg16(AZOTEQ_IQS5XX_ADDRESS, AZOTEQ_IQS5XX_REG_PREVIOUS_CYCLE_TIME, (uint8_t *)base_data, 10, AZOTEQ_IQS5XX_TIMEOUT_MS);
+    if (status == I2C_STATUS_SUCCESS) {
+        azoteq_iqs5xx_end_session();
+    }
+    return status;
+}
+
+i2c_status_t azoteq_iqs5xx_get_precision_touchpad_data(azoteq_iqs5xx_base_data_t *base_data, azoteq_iqs5xx_precision_touchpad_data_t *precision_touchpad_data) {
+    const size_t BUF_SIZE = sizeof(azoteq_iqs5xx_base_data_t) + sizeof(azoteq_iqs5xx_precision_touchpad_data_t);
+    uint8_t buf[BUF_SIZE];
+    i2c_status_t status = i2c_readReg16(AZOTEQ_IQS5XX_ADDRESS, AZOTEQ_IQS5XX_REG_PREVIOUS_CYCLE_TIME, (uint8_t *)buf, BUF_SIZE, AZOTEQ_IQS5XX_TIMEOUT_MS);
+    memcpy(base_data, buf, sizeof(azoteq_iqs5xx_base_data_t));
+    memcpy(precision_touchpad_data, buf + sizeof(azoteq_iqs5xx_base_data_t), sizeof(azoteq_iqs5xx_precision_touchpad_data_t));
     if (status == I2C_STATUS_SUCCESS) {
         azoteq_iqs5xx_end_session();
     }
@@ -286,6 +285,7 @@ uint16_t azoteq_iqs5xx_get_product(void) {
 
 void azoteq_iqs5xx_setup_resolution(void) {
 #if !defined(AZOTEQ_IQS5XX_RESOLUTION_X) && !defined(AZOTEQ_IQS5XX_RESOLUTION_Y)
+#   error "Shouldn't happen"
     switch (azoteq_iqs5xx_product_number) {
         case AZOTEQ_IQS550:
             azoteq_iqs5xx_device_resolution_t.resolution_x = 3584;

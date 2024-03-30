@@ -161,6 +161,28 @@ ifeq ($(strip $(POINTING_DEVICE_ENABLE)), yes)
     endif
 endif
 
+VALID_PRECISION_TOUCHPAD_DRIVER_TYPES := azoteq_iqs5xx custom
+ifeq ($(strip $(PRECISION_TOUCHPAD_ENABLE)), yes)
+    ifeq ($(filter $(PRECISION_TOUCHPAD_DRIVER),$(VALID_PRECISION_TOUCHPAD_DRIVER_TYPES)),)
+        $(call CATASTROPHIC_ERROR,Invalid PRECISION_TOUCHPAD_DRIVER,PRECISION_TOUCHPAD_DRIVER="$(PRECISION_TOUCHPAD_DRIVER)" is not a valid precision touchpad device type)
+    else
+        OPT_DEFS += -DPRECISION_TOUCHPAD_ENABLE
+        # precision touchpad should have mouse for fallback.
+        MOUSE_ENABLE := yes
+        VPATH += $(QUANTUM_DIR)/precision_touchpad
+        SRC += $(QUANTUM_DIR)/precision_touchpad/precision_touchpad.c
+        SRC += $(QUANTUM_DIR)/precision_touchpad/precision_touchpad_drivers.c
+        ifneq ($(strip $(PRECISION_TOUCHPAD_DRIVER)), custom)
+            SRC += drivers/sensors/$(strip $(PRECISION_TOUCHPAD_DRIVER)).c
+            OPT_DEFS += -DPRECISION_TOUCHPAD_DRIVER_$(strip $(shell echo $(PRECISION_TOUCHPAD_DRIVER) | tr '[:lower:]' '[:upper:]'))
+        endif
+        OPT_DEFS += -DPRECISION_TOUCHPAD_DRIVER_$(strip $(PRECISION_TOUCHPAD_DRIVER))
+        ifeq ($(strip $(PRECISION_TOUCHPAD_DRIVER)), azoteq_iqs5xx)
+            I2C_DRIVER_REQUIRED = yes
+        endif
+    endif
+endif
+
 QUANTUM_PAINTER_ENABLE ?= no
 ifeq ($(strip $(QUANTUM_PAINTER_ENABLE)), yes)
     include $(QUANTUM_DIR)/painter/rules.mk

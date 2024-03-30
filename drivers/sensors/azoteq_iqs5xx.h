@@ -5,7 +5,7 @@
 #pragma once
 
 #include "i2c_master.h"
-#include "pointing_device.h"
+#include "report.h"
 #include "util.h"
 
 typedef enum {
@@ -66,7 +66,7 @@ typedef struct PACKED {
 typedef struct {
     uint8_t h : 8;
     uint8_t l : 8;
-} azoteq_iqs5xx_relative_xy_t;
+} PACKED azoteq_iqs5xx_relative_xy_t;
 
 typedef struct {
     uint8_t                          previous_cycle_time;
@@ -80,6 +80,19 @@ typedef struct {
 } azoteq_iqs5xx_base_data_t;
 
 _Static_assert(sizeof(azoteq_iqs5xx_base_data_t) == 10, "azoteq_iqs5xx_basic_report_t should be 10 bytes");
+
+typedef struct {
+    uint16_t x;
+    uint16_t y;
+    uint16_t touch_strength;
+    uint8_t touch_area;
+} PACKED azoteq_iqs5xx_finger_data_t;
+
+typedef struct {
+    azoteq_iqs5xx_finger_data_t finger[5];
+} azoteq_iqs5xx_precision_touchpad_data_t;
+
+_Static_assert(sizeof(azoteq_iqs5xx_precision_touchpad_data_t) == 35, "azoteq_iqs5xx_precision_touchpad_data_t should be 35 bytes");
 
 typedef struct {
     uint8_t                     number_of_fingers;
@@ -176,6 +189,25 @@ typedef struct {
 #    define POINTING_DEVICE_TASK_THROTTLE_MS AZOTEQ_IQS5XX_REPORT_RATE
 #endif
 
+#if defined(AZOTEQ_IQS5XX_TPS43)
+#    define AZOTEQ_IQS5XX_WIDTH_MM 43
+#    define AZOTEQ_IQS5XX_HEIGHT_MM 40
+#    define AZOTEQ_IQS5XX_RESOLUTION_X 2048
+#    define AZOTEQ_IQS5XX_RESOLUTION_Y 1792
+#elif defined(AZOTEQ_IQS5XX_TPS65)
+#    define AZOTEQ_IQS5XX_WIDTH_MM 65
+#    define AZOTEQ_IQS5XX_HEIGHT_MM 49
+#    define AZOTEQ_IQS5XX_RESOLUTION_X 3072
+#    define AZOTEQ_IQS5XX_RESOLUTION_Y 2048
+#elif !defined(AZOTEQ_IQS5XX_WIDTH_MM) || !defined(AZOTEQ_IQS5XX_HEIGHT_MM)  || !defined(AZOTEQ_IQS5XX_RESOLUTION_X) || !defined(AZOTEQ_IQS5XX_RESOLUTION_Y)
+#    error "You must define all the azoteq trackpad dimensions"
+#endif
+
+#define PRECISION_TRACKPAD_RESOLITON_X AZOTEQ_IQS5XX_RESOLUTION_X
+#define PRECISION_TRACKPAD_RESOLITON_Y AZOTEQ_IQS5XX_RESOLUTION_Y
+#define PRECISION_TRACKPAD_WIDTH_MM AZOTEQ_IQS5XX_WIDTH_MM
+#define PRECISION_TRACKPAD_HEIGHT_MM AZOTEQ_IQS5XX_HEIGHT_MM
+
 void           azoteq_iqs5xx_init(void);
 i2c_status_t   azoteq_iqs5xx_wake(void);
 report_mouse_t azoteq_iqs5xx_get_report(report_mouse_t mouse_report);
@@ -187,6 +219,7 @@ i2c_status_t   azoteq_iqs5xx_set_gesture_config(bool end_session);
 i2c_status_t   azoteq_iqs5xx_set_xy_config(bool flip_x, bool flip_y, bool switch_xy, bool palm_reject, bool end_session);
 i2c_status_t   azoteq_iqs5xx_reset_suspend(bool reset, bool suspend, bool end_session);
 i2c_status_t   azoteq_iqs5xx_get_base_data(azoteq_iqs5xx_base_data_t *base_data);
+i2c_status_t   azoteq_iqs5xx_get_precision_touchpad_data(azoteq_iqs5xx_base_data_t *base_data, azoteq_iqs5xx_precision_touchpad_data_t *precision_touchpad_data);
 void           azoteq_iqs5xx_set_cpi(uint16_t cpi);
 uint16_t       azoteq_iqs5xx_get_cpi(void);
 uint16_t       azoteq_iqs5xx_get_product(void);

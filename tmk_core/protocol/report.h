@@ -37,7 +37,12 @@ enum hid_report_ids {
     REPORT_ID_PROGRAMMABLE_BUTTON,
     REPORT_ID_NKRO,
     REPORT_ID_JOYSTICK,
-    REPORT_ID_DIGITIZER
+    REPORT_ID_DIGITIZER,
+    REPORT_ID_PRECISION_TOUCHPAD,
+    REPORT_ID_PRECISION_TOUCHPAD_FEATURE,
+    REPORT_ID_PRECISION_TOUCHPAD_DEVICE_CERTIFICATION_STATUS_FEATURE,
+    REPORT_ID_PRECISION_TOUCHPAD_INPUT_MODE_CONFIGURATION,
+    REPORT_ID_PRECISION_TOUCHPAD_SELECTIVE_REPORTING_CONFIGURATION,
 };
 
 /* Mouse buttons */
@@ -185,6 +190,11 @@ typedef struct {
 } PACKED report_extra_t;
 
 typedef struct {
+    uint8_t report_id;
+    uint8_t led_state;
+} PACKED report_keyboard_led_t;
+
+typedef struct {
     uint8_t  report_id;
     uint32_t usage;
 } PACKED report_programmable_button_t;
@@ -209,6 +219,54 @@ typedef struct {
     int8_t            v;
     int8_t            h;
 } PACKED report_mouse_t;
+
+// https://learn.microsoft.com/en-us/windows-hardware/design/component-guidelines/touchpad-windows-precision-touchpad-collection
+typedef struct {
+    bool confidence : 1;  // In USB HID, this is "Touch Valid". In Windows Precision Touchpad, this is "Confidence".
+    bool tip : 1;  // In USB HID, this is "Tip Switch". In Windows Precision Touchpad, this is "Tip".
+    uint8_t contact_id : 4;
+    uint8_t  reserved : 2;
+
+    uint16_t pressure;  // In USB HID, this is "Tip Pressure". In Windows Precision Touchpad, this is "Pressure".
+
+    uint16_t x;
+    uint16_t y;
+    // no width / height / azimuth because Azoteq IQS5xx doesn't have it.
+} PACKED collection_precision_touchpad_contact_t;
+
+typedef struct {
+    uint8_t report_id;
+    collection_precision_touchpad_contact_t contact[5];
+    uint16_t scan_time;
+    uint8_t contact_count;
+    uint8_t reserved;
+    // no mechanical force because Azoteq IQS5xx doesn't have it.
+} PACKED report_precision_touchpad_t;
+
+// _Static_assert(sizeof(report_precision_touchpad_t) == 39, "report_precision_touchpad_t should be 39 bytes");
+
+typedef struct {
+    uint8_t report_id;
+    uint8_t contact_count_maximum : 4;
+    uint8_t button_type : 4;  // In USB HID, this is "Pad Type". In Windows Precision Touchpad, this is "Button Type".
+} PACKED report_precision_touchpad_device_capability_t;
+
+typedef struct {
+    uint8_t report_id;
+    uint8_t blob[255];
+} PACKED report_precision_touchpad_device_certification_status_t;
+
+typedef struct {
+    uint8_t report_id;
+    uint8_t input_mode;
+} PACKED report_precision_touchpad_device_input_mode_t;
+
+typedef struct {
+    uint8_t report_id;
+    bool surface_switch : 1;
+    bool button_switch : 1;
+    uint8_t reserved : 6;
+} PACKED report_precision_touchpad_device_selective_reporting_t;
 
 typedef struct {
 #ifdef DIGITIZER_SHARED_EP
@@ -334,6 +392,10 @@ void clear_keys_from_report(void);
 
 #ifdef MOUSE_ENABLE
 bool has_mouse_report_changed(report_mouse_t* new_report, report_mouse_t* old_report);
+#endif
+
+#ifdef PRECISION_TOUCHPAD_ENABLE
+bool has_precision_touchpad_report_changed(report_precision_touchpad_t* new_report, report_precision_touchpad_t* old_report);
 #endif
 
 #ifdef __cplusplus

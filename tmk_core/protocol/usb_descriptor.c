@@ -49,6 +49,10 @@
 #    include "os_detection.h"
 #endif
 
+#ifdef PRECISION_TOUCHPAD_ENABLE
+#    include "precision_touchpad.h"
+#endif
+
 // clang-format off
 
 /*
@@ -172,6 +176,148 @@ const USB_Descriptor_HIDReport_Datatype_t PROGMEM SharedReport[] = {
             HID_RI_INPUT(8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_RELATIVE),
         HID_RI_END_COLLECTION(0),
     HID_RI_END_COLLECTION(0),
+#    ifndef MOUSE_SHARED_EP
+};
+#    endif
+#endif
+
+#ifdef PRECISION_TOUCHPAD_ENABLE
+#    ifndef MOUSE_SHARED_EP
+#error "Precision touchpad requires MOUSE_SHARED_EP."
+#    elif !defined(SHARED_REPORT_STARTED)
+const USB_Descriptor_HIDReport_Datatype_t PROGMEM SharedReport[] = {
+#        define SHARED_REPORT_STARTED
+#    endif
+
+    HID_RI_USAGE_PAGE(8, 0x0D),            // Digitizers
+    HID_RI_USAGE(8, 0x05),                 // Touch Pad
+    HID_RI_COLLECTION(8, 0x01),            // Application
+        HID_RI_REPORT_ID(8, REPORT_ID_PRECISION_TOUCHPAD),
+
+#    define FINGER \
+        HID_RI_USAGE(8, 0x22),             /* Finger */ \
+        HID_RI_COLLECTION(8, 0x02),        /* Logical */ \
+            HID_RI_USAGE(8, 0x47),             /* Touch Valid */ \
+            HID_RI_USAGE(8, 0x42),             /* Tip Switch */ \
+            HID_RI_LOGICAL_MINIMUM(8, 0), \
+            HID_RI_LOGICAL_MAXIMUM(8, 1), \
+            HID_RI_PHYSICAL_MINIMUM(8, 0), \
+            HID_RI_PHYSICAL_MAXIMUM(8, 0), \
+            HID_RI_REPORT_COUNT(8, 2), \
+            HID_RI_REPORT_SIZE(8, 1), \
+            HID_RI_INPUT(8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_ABSOLUTE), \
+            HID_RI_USAGE(8, 0x51),             /* Contact Identifier */ \
+            HID_RI_LOGICAL_MAXIMUM(8, 15), \
+            HID_RI_REPORT_COUNT(8, 1), \
+            HID_RI_REPORT_SIZE(8, 4), \
+            HID_RI_INPUT(8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_ABSOLUTE), \
+            HID_RI_REPORT_SIZE(8, 2), \
+            HID_RI_INPUT(8, HID_IOF_CONSTANT | HID_IOF_VARIABLE), \
+            HID_RI_USAGE(8, 0x30),             /* Tip Pressure */ \
+            HID_RI_LOGICAL_MAXIMUM(16, 65535), \
+            HID_RI_REPORT_SIZE(8, 16), \
+            HID_RI_INPUT(8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_ABSOLUTE), \
+            HID_RI_USAGE_PAGE(8, 0x01),        /* Generic Desktop */ \
+            HID_RI_USAGE(8, 0x30),             /* X */ \
+            HID_RI_UNIT(8, 0x13),              /* Inch */ \
+            HID_RI_UNIT_EXPONENT(8, 0x0E),     /* UnitExponent(0.01) */ \
+            HID_RI_PHYSICAL_MAXIMUM(16, (PRECISION_TRACKPAD_WIDTH_MM * 1000 * 4) / 254), \
+            HID_RI_LOGICAL_MAXIMUM(16, PRECISION_TRACKPAD_RESOLITON_X), \
+            HID_RI_REPORT_SIZE(8, 16), \
+            HID_RI_INPUT(8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_ABSOLUTE), \
+            HID_RI_USAGE(8, 0x31),             /* Y */ \
+            HID_RI_PHYSICAL_MAXIMUM(16, (PRECISION_TRACKPAD_HEIGHT_MM * 1000 * 4) / 254), \
+            HID_RI_LOGICAL_MAXIMUM(16, PRECISION_TRACKPAD_RESOLITON_Y), \
+            HID_RI_INPUT(8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_ABSOLUTE), \
+        HID_RI_END_COLLECTION(0), \
+        HID_RI_UNIT_EXPONENT(8, 0x00),     /* UnitExponent(1) */ \
+        HID_RI_USAGE_PAGE(8, 0x0D)         /* Digitizers */
+
+        FINGER,
+        FINGER,
+        FINGER,
+        FINGER,
+        FINGER,
+
+#    undef FINGER
+
+        HID_RI_USAGE(8, 0x56),             // Scan Time
+        HID_RI_PHYSICAL_MINIMUM(8, 0),
+        HID_RI_PHYSICAL_MAXIMUM(16, 65535),
+        HID_RI_UNIT(16, 0x1001),           // Second
+        HID_RI_UNIT_EXPONENT(8, 0x0C),     // UnitExponent(0.0001)
+        HID_RI_LOGICAL_MINIMUM(8, 0),
+        HID_RI_LOGICAL_MAXIMUM(16, 65535),
+        HID_RI_REPORT_COUNT(8, 1),
+        HID_RI_REPORT_SIZE(8, 16),
+        HID_RI_INPUT(8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_ABSOLUTE),
+        HID_RI_UNIT_EXPONENT(8, 0x00),     // UnitExponent(1)
+
+        HID_RI_USAGE(8, 0x54),             // Contact Count
+        HID_RI_LOGICAL_MAXIMUM(8, 127),
+        HID_RI_REPORT_SIZE(8, 8),
+        HID_RI_INPUT(8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_ABSOLUTE),
+
+        HID_RI_USAGE_PAGE(8, 0x09),        // Button
+        HID_RI_USAGE(8, 0x01),             // Button 1
+        HID_RI_LOGICAL_MAXIMUM(8, 1),
+        HID_RI_REPORT_COUNT(8, 1),
+        HID_RI_REPORT_SIZE(8, 1),
+        HID_RI_INPUT(8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_ABSOLUTE),
+        HID_RI_REPORT_SIZE(8, 7),
+        HID_RI_INPUT(8, HID_IOF_CONSTANT | HID_IOF_VARIABLE),
+
+
+        HID_RI_REPORT_ID(8, REPORT_ID_PRECISION_TOUCHPAD_FEATURE),
+        HID_RI_USAGE_PAGE(8, 0x0D),        // Digitizers
+        HID_RI_USAGE(8, 0x55),             // Contact Count Maximum
+        HID_RI_USAGE(8, 0x59),             // Pad Type
+        HID_RI_LOGICAL_MAXIMUM(8, 15),
+        HID_RI_REPORT_COUNT(8, 2),
+        HID_RI_REPORT_SIZE(8, 4),
+        HID_RI_FEATURE(8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_ABSOLUTE | HID_IOF_NON_VOLATILE),
+
+
+        HID_RI_REPORT_ID(8, REPORT_ID_PRECISION_TOUCHPAD_DEVICE_CERTIFICATION_STATUS_FEATURE),
+        HID_RI_USAGE_PAGE(8, 0xFF),        // Vendor Defined Page 1
+        HID_RI_USAGE(8, 0xC5),             // Device Certification Status Feature Report
+        HID_RI_LOGICAL_MAXIMUM(8, 255),
+        HID_RI_REPORT_COUNT(16, 256),
+        HID_RI_REPORT_SIZE(8, 8),
+        HID_RI_FEATURE(8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_ABSOLUTE | HID_IOF_NON_VOLATILE),
+    HID_RI_END_COLLECTION(0),
+
+    HID_RI_USAGE_PAGE(8, 0x0D),            // Digitizers
+    HID_RI_USAGE(8, 0x0E),                 // Device Configuration
+    HID_RI_COLLECTION(8, 0x01),            // Application
+        HID_RI_REPORT_ID(8, REPORT_ID_PRECISION_TOUCHPAD_INPUT_MODE_CONFIGURATION),
+        HID_RI_USAGE(8, 0x22),             /* Finger */
+        HID_RI_COLLECTION(8, 0x02),        /* Logical */
+            HID_RI_USAGE(8, 0x52),             /* Input Mode */
+            HID_RI_LOGICAL_MAXIMUM(8, 10),
+            HID_RI_REPORT_SIZE(8, 8),
+            HID_RI_REPORT_COUNT(8, 1),
+            HID_RI_FEATURE(8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_ABSOLUTE | HID_IOF_NON_VOLATILE),
+        HID_RI_END_COLLECTION(0),
+
+
+        HID_RI_USAGE(8, 0x22),             /* Finger */
+        HID_RI_COLLECTION(8, 0x00),        // Physical
+            HID_RI_REPORT_ID(8, REPORT_ID_PRECISION_TOUCHPAD_SELECTIVE_REPORTING_CONFIGURATION),
+            HID_RI_USAGE(8, 0x57),             /* Surface Switch */
+            HID_RI_USAGE(8, 0x58),             /* Button Switch */
+            HID_RI_LOGICAL_MAXIMUM(8, 1),
+            HID_RI_REPORT_SIZE(8, 1),
+            HID_RI_REPORT_COUNT(8, 2),
+            HID_RI_FEATURE(8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_ABSOLUTE | HID_IOF_NON_VOLATILE),
+
+            HID_RI_REPORT_COUNT(8, 1),
+            HID_RI_REPORT_SIZE(8, 6),
+            HID_RI_FEATURE(8, HID_IOF_CONSTANT | HID_IOF_VARIABLE),
+        HID_RI_END_COLLECTION(0),
+    HID_RI_END_COLLECTION(0),
+
+
 #    ifndef MOUSE_SHARED_EP
 };
 #    endif

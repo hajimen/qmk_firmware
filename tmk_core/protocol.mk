@@ -15,6 +15,13 @@ ifeq ($(strip $(KEYBOARD_SHARED_EP)), yes)
     MOUSE_SHARED_EP = yes
 endif
 
+ifeq ($(strip $(PRECISION_TOUCHPAD_ENABLE)), yes)
+    OPT_DEFS += -DPRECISION_TOUCHPAD_ENABLE
+    MOUSE_ENABLE = yes  # redundant but for clarification
+    # precision touchpad always use shared endpoint
+    MOUSE_SHARED_EP = yes
+endif
+
 ifeq ($(strip $(MOUSE_ENABLE)), yes)
     OPT_DEFS += -DMOUSE_ENABLE
     ifeq ($(strip $(MOUSE_SHARED_EP)), yes)

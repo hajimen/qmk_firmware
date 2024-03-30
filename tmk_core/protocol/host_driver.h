@@ -28,6 +28,7 @@ typedef struct {
     void (*send_keyboard)(report_keyboard_t *);
     void (*send_nkro)(report_nkro_t *);
     void (*send_mouse)(report_mouse_t *);
+    void (*send_precision_touchpad)(report_precision_touchpad_t *);
     void (*send_extra)(report_extra_t *);
 } host_driver_t;
 

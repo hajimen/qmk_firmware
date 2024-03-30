@@ -300,3 +300,17 @@ __attribute__((weak)) bool has_mouse_report_changed(report_mouse_t* new_report, 
     return changed;
 }
 #endif
+
+#ifdef PRECISION_TOUCHPAD_ENABLE
+/**
+ * @brief Compares 2 precision touchpad reports for difference and returns result. Empty
+ * reports always evaluate as unchanged.
+ *
+ * @param[in] new_report report_precision_touchpad_t
+ * @param[in] old_report report_precision_touchpad_t
+ * @return bool result
+ */
+__attribute__((weak)) bool has_precision_touchpad_report_changed(report_precision_touchpad_t* new_report, report_precision_touchpad_t* old_report) {
+    return new_report->scan_time != old_report->scan_time;  // usually scan_time is enough to detect
+}
+#endif

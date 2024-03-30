@@ -84,6 +84,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifdef POINTING_DEVICE_ENABLE
 #    include "pointing_device.h"
 #endif
+#ifdef PRECISION_TOUCHPAD_ENABLE
+#    include "precision_touchpad.h"
+#endif
 #ifdef MIDI_ENABLE
 #    include "process_midi.h"
 #endif
@@ -453,6 +456,10 @@ void keyboard_init(void) {
     // init after split init
     pointing_device_init();
 #endif
+#ifdef PRECISION_TOUCHPAD_ENABLE
+    // init after split init
+    precision_touchpad_init();
+#endif
 #ifdef BLUETOOTH_ENABLE
     bluetooth_init();
 #endif
@@ -672,6 +679,13 @@ void keyboard_task(void) {
 #ifdef POINTING_DEVICE_ENABLE
     if (pointing_device_task()) {
         last_pointing_device_activity_trigger();
+        activity_has_occurred = true;
+    }
+#endif
+
+#ifdef PRECISION_TOUCHPAD_ENABLE
+    if (precision_touchpad_task()) {
+        // last_precision_touchpad_activity_trigger();  no use except split
         activity_has_occurred = true;
     }
 #endif

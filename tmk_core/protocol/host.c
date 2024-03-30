@@ -129,6 +129,12 @@ void host_mouse_send(report_mouse_t *report) {
     (*driver->send_mouse)(report);
 }
 
+void host_precision_touchpad_send(report_precision_touchpad_t *report) {
+    if (!driver) return;
+    report->report_id = REPORT_ID_PRECISION_TOUCHPAD;
+    (*driver->send_precision_touchpad)(report);
+}
+
 void host_system_send(uint16_t usage) {
     if (usage == last_system_usage) return;
     last_system_usage = usage;

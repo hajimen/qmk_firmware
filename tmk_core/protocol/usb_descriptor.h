@@ -217,6 +217,10 @@ enum usb_endpoints {
 #    define MOUSE_IN_EPNUM SHARED_IN_EPNUM
 #endif
 
+#if defined(PRECISION_TOUCHPAD_ENABLE)
+#    define PRECISION_TOUCHPAD_IN_EPNUM SHARED_IN_EPNUM
+#endif
+
 #ifdef RAW_ENABLE
     RAW_IN_EPNUM = NEXT_EPNUM,
 #    ifdef USB_ENDPOINTS_ARE_REORDERABLE
