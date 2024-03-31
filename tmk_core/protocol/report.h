@@ -39,10 +39,10 @@ enum hid_report_ids {
     REPORT_ID_JOYSTICK,
     REPORT_ID_DIGITIZER,
     REPORT_ID_PRECISION_TOUCHPAD,
-    REPORT_ID_PRECISION_TOUCHPAD_FEATURE,
-    REPORT_ID_PRECISION_TOUCHPAD_DEVICE_CERTIFICATION_STATUS_FEATURE,
-    REPORT_ID_PRECISION_TOUCHPAD_INPUT_MODE_CONFIGURATION,
-    REPORT_ID_PRECISION_TOUCHPAD_SELECTIVE_REPORTING_CONFIGURATION,
+    REPORT_ID_PRECISION_TOUCHPAD_CAPABILITY,
+    REPORT_ID_PRECISION_TOUCHPAD_CERTIFICATION,
+    REPORT_ID_PRECISION_TOUCHPAD_INPUT_MODE,
+    REPORT_ID_PRECISION_TOUCHPAD_SELECTIVE_REPORTING,
 };
 
 /* Mouse buttons */
@@ -242,8 +242,6 @@ typedef struct {
     uint8_t reserved : 1;
     // no mechanical force because Azoteq IQS5xx doesn't have it.
 } PACKED report_precision_touchpad_t;
-
-// _Static_assert(sizeof(report_precision_touchpad_t) == 39, "report_precision_touchpad_t should be 39 bytes");
 
 typedef struct {
     uint8_t report_id;

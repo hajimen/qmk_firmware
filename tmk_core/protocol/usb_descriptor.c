@@ -266,7 +266,7 @@ const USB_Descriptor_HIDReport_Datatype_t PROGMEM SharedReport[] = {
         HID_RI_INPUT(8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_ABSOLUTE),
 
 
-        HID_RI_REPORT_ID(8, REPORT_ID_PRECISION_TOUCHPAD_FEATURE),
+        HID_RI_REPORT_ID(8, REPORT_ID_PRECISION_TOUCHPAD_CAPABILITY),
         HID_RI_USAGE_PAGE(8, 0x0D),        // Digitizers
         HID_RI_USAGE(8, 0x55),             // Contact Count Maximum
         HID_RI_USAGE(8, 0x59),             // Pad Type
@@ -276,7 +276,7 @@ const USB_Descriptor_HIDReport_Datatype_t PROGMEM SharedReport[] = {
         HID_RI_FEATURE(8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_ABSOLUTE | HID_IOF_NON_VOLATILE),
 
 
-        HID_RI_REPORT_ID(8, REPORT_ID_PRECISION_TOUCHPAD_DEVICE_CERTIFICATION_STATUS_FEATURE),
+        HID_RI_REPORT_ID(8, REPORT_ID_PRECISION_TOUCHPAD_CERTIFICATION),
         HID_RI_USAGE_PAGE(8, 0xFF),        // Vendor Defined Page 1
         HID_RI_USAGE(8, 0xC5),             // Device Certification Status Feature Report
         HID_RI_LOGICAL_MAXIMUM(8, 255),
@@ -288,7 +288,7 @@ const USB_Descriptor_HIDReport_Datatype_t PROGMEM SharedReport[] = {
     HID_RI_USAGE_PAGE(8, 0x0D),            // Digitizers
     HID_RI_USAGE(8, 0x0E),                 // Device Configuration
     HID_RI_COLLECTION(8, 0x01),            // Application
-        HID_RI_REPORT_ID(8, REPORT_ID_PRECISION_TOUCHPAD_INPUT_MODE_CONFIGURATION),
+        HID_RI_REPORT_ID(8, REPORT_ID_PRECISION_TOUCHPAD_INPUT_MODE),
         HID_RI_USAGE(8, 0x22),             /* Finger */
         HID_RI_COLLECTION(8, 0x02),        /* Logical */
             HID_RI_USAGE(8, 0x52),             /* Input Mode */
@@ -301,7 +301,7 @@ const USB_Descriptor_HIDReport_Datatype_t PROGMEM SharedReport[] = {
 
         HID_RI_USAGE(8, 0x22),             /* Finger */
         HID_RI_COLLECTION(8, 0x00),        // Physical
-            HID_RI_REPORT_ID(8, REPORT_ID_PRECISION_TOUCHPAD_SELECTIVE_REPORTING_CONFIGURATION),
+            HID_RI_REPORT_ID(8, REPORT_ID_PRECISION_TOUCHPAD_SELECTIVE_REPORTING),
             HID_RI_USAGE(8, 0x57),             /* Surface Switch */
             HID_RI_USAGE(8, 0x58),             /* Button Switch */
             HID_RI_LOGICAL_MAXIMUM(8, 1),

@@ -457,7 +457,6 @@ void keyboard_init(void) {
     pointing_device_init();
 #endif
 #ifdef PRECISION_TOUCHPAD_ENABLE
-    // init after split init
     precision_touchpad_init();
 #endif
 #ifdef BLUETOOTH_ENABLE
