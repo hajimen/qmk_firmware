@@ -23,9 +23,9 @@
 #ifdef PRECISION_TOUCHPAD_DEBUG
 #    include "debug.h"
 #    include "print.h"
-#    define pd_dprintf(...) dprintf(__VA_ARGS__)
+#    define pt_dprintf(...) dprintf(__VA_ARGS__)
 #else
-#    define pd_dprintf(...) \
+#    define pt_dprintf(...) \
         do {                \
         } while (0)
 #endif
@@ -85,7 +85,8 @@ void azoteq_iqs5xx_init(void) {
 volatile int debug_x = 1;
 volatile uint8_t debug_counter = 0;
 
-bool azoteq_iqs5xx_read_report(void) {
+bool azoteq_iqs5xx_refresh_report(void) {
+    debug_enable = true;
     report_precision_touchpad_t temp_precision_touchpad_report = {0};
     report_mouse_t temp_mouse_report     = {0};
     static uint8_t previous_button_state = 0;
@@ -95,9 +96,11 @@ bool azoteq_iqs5xx_read_report(void) {
     if (azoteq_iqs5xx_init_status == I2C_STATUS_SUCCESS) {
         if (!palReadLine(PRECISION_TOUCHPAD_RDY_PIN)) {
             if (was_active) {
+                pt_dprintf("IQS5XX - was_active occurs.\n");
                 was_active = false;
                 local_mouse_report = temp_mouse_report;
                 if (local_precision_touchpad_report.contact_count > 0) {
+                    pt_dprintf("IQS5XX - was_active and contact_count > 0 occurs.\n");
                     local_precision_touchpad_report.scan_time++;
                     local_precision_touchpad_report.contact_count = 0;
                 }
@@ -111,8 +114,9 @@ bool azoteq_iqs5xx_read_report(void) {
         bool         ignore_movement = false;
 
         if (status == I2C_STATUS_SUCCESS) {
-            // pd_dprintf("IQS5XX - previous cycle time: %d \n", base_data.previous_cycle_time);
+            // pt_dprintf("IQS5XX - previous cycle time: %d \n", base_data.previous_cycle_time);
             if (base_data.previous_cycle_time == 0) {  // I don't know why, but it occurs and have invalid data.
+                pt_dprintf("IQS5XX - base_data.previous_cycle_time == 0 occurs.\n");
                 return false;
             }
             read_error_count = 0;
@@ -120,37 +124,37 @@ bool azoteq_iqs5xx_read_report(void) {
             was_active = true;
             if (!precision_touchpad_input_mode_touchpad) {
                 if (base_data.gesture_events_0.single_tap || base_data.gesture_events_0.press_and_hold) {
-                    pd_dprintf("IQS5XX - Single tap/hold.\n");
+                    pt_dprintf("IQS5XX - Single tap/hold.\n");
                     mouse_buttons.b.button_1 = true;
                 } else if (base_data.gesture_events_1.two_finger_tap) {
-                    pd_dprintf("IQS5XX - Two finger tap.\n");
+                    pt_dprintf("IQS5XX - Two finger tap.\n");
                     mouse_buttons.b.button_2 = true;
                 } else if (base_data.gesture_events_0.swipe_x_neg) {
-                    pd_dprintf("IQS5XX - X-.\n");
+                    pt_dprintf("IQS5XX - X-.\n");
                     mouse_buttons.b.button_4 = true;
                     ignore_movement     = true;
                 } else if (base_data.gesture_events_0.swipe_x_pos) {
-                    pd_dprintf("IQS5XX - X+.\n");
+                    pt_dprintf("IQS5XX - X+.\n");
                     mouse_buttons.b.button_5 = true;
                     ignore_movement     = true;
                 } else if (base_data.gesture_events_0.swipe_y_neg) {
-                    pd_dprintf("IQS5XX - Y-.\n");
+                    pt_dprintf("IQS5XX - Y-.\n");
                     mouse_buttons.b.button_6 = true;
                     ignore_movement     = true;
                 } else if (base_data.gesture_events_0.swipe_y_pos) {
-                    pd_dprintf("IQS5XX - Y+.\n");
+                    pt_dprintf("IQS5XX - Y+.\n");
                     mouse_buttons.b.button_3 = true;
                     ignore_movement     = true;
                 } else if (base_data.gesture_events_1.zoom) {
                     if (AZOTEQ_IQS5XX_COMBINE_H_L_BYTES(base_data.x.h, base_data.x.l) < 0) {
-                        pd_dprintf("IQS5XX - Zoom out.\n");
+                        pt_dprintf("IQS5XX - Zoom out.\n");
                         mouse_buttons.b.button_7 = true;
                     } else if (AZOTEQ_IQS5XX_COMBINE_H_L_BYTES(base_data.x.h, base_data.x.l) > 0) {
-                        pd_dprintf("IQS5XX - Zoom in.\n");
+                        pt_dprintf("IQS5XX - Zoom in.\n");
                         mouse_buttons.b.button_8 = true;
                     }
                 } else if (base_data.gesture_events_1.scroll) {
-                    pd_dprintf("IQS5XX - Scroll.\n");
+                    pt_dprintf("IQS5XX - Scroll.\n");
                     temp_mouse_report.h = CONSTRAIN_HID(AZOTEQ_IQS5XX_COMBINE_H_L_BYTES(base_data.x.h, base_data.x.l));
                     temp_mouse_report.v = CONSTRAIN_HID(AZOTEQ_IQS5XX_COMBINE_H_L_BYTES(base_data.y.h, base_data.y.l));
                 }
@@ -206,10 +210,10 @@ bool azoteq_iqs5xx_read_report(void) {
                 read_error_count++;
             }
             temp_mouse_report.buttons = previous_button_state;
-            pd_dprintf("IQS5XX - get report failed: %d \n", status);
+            pt_dprintf("IQS5XX - get report failed: %d \n", status);
         }
     } else {
-        pd_dprintf("IQS5XX - Init failed: %d \n", azoteq_iqs5xx_init_status);
+        pt_dprintf("IQS5XX - Init failed: %d \n", azoteq_iqs5xx_init_status);
     }
 
     return true;
@@ -230,7 +234,7 @@ const precision_touchpad_driver_t precision_touchpad_driver = {
     .get_fallback_mouse_report = azoteq_iqs5xx_get_fallback_mouse_report,
     .set_cpi    = azoteq_iqs5xx_set_cpi,
     .get_cpi    = azoteq_iqs5xx_get_cpi,
-    .read_report = azoteq_iqs5xx_read_report
+    .refresh_report = azoteq_iqs5xx_refresh_report
 };
 // clang-format on
 #else
@@ -245,7 +249,7 @@ __attribute__((weak)) uint16_t precision_touchpad_driver_get_cpi(void) {
     return 0;
 }
 __attribute__((weak)) void precision_touchpad_driver_set_cpi(uint16_t cpi) {}
-__attribute__((weak)) bool precision_touchpad_driver_read_report() {
+__attribute__((weak)) bool precision_touchpad_driver_refresh_report() {
     return false;
 }
 #endif

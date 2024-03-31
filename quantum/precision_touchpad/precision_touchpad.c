@@ -141,7 +141,7 @@ __attribute__((weak)) bool precision_touchpad_send(void) {
  *
  */
 __attribute__((weak)) bool precision_touchpad_task(void) {
-    if (!precision_touchpad_driver.read_report()) {
+    if (!precision_touchpad_driver.refresh_report()) {
         return false;
     }
     local_precision_touchpad_report = precision_touchpad_driver.get_precision_touchpad_report();

@@ -30,7 +30,7 @@ report_precision_touchpad_t precision_touchpad_driver_get_precision_touchpad_rep
 report_mouse_t precision_touchpad_driver_get_fallback_mouse_report();
 uint16_t       precision_touchpad_driver_get_cpi(void);
 void           precision_touchpad_driver_set_cpi(uint16_t cpi);
-bool           precision_touchpad_driver_read_report();
+bool           precision_touchpad_driver_refresh_report();
 #endif
 
 typedef struct {
@@ -39,7 +39,7 @@ typedef struct {
     report_mouse_t (*get_fallback_mouse_report)(void);
     void (*set_cpi)(uint16_t);
     uint16_t (*get_cpi)(void);
-    bool (*read_report)(void);
+    bool (*refresh_report)(void);
 } precision_touchpad_driver_t;
 
 #define XY_REPORT_MIN INT8_MIN
