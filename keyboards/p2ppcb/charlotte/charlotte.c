@@ -29,7 +29,7 @@ static const uint32_t SLAVE_SUSPEND_THREASHOLD = 500;
 static volatile uint32_t last_i2c_transaction = 0U;
 #endif // SPLIT_KEYBOARD
 
-static bool cols_enabled[N_NORMAL_COLS] = {};
+static bool cols_enabled[MATRIX_COLS];
 
 static const uint16_t LED_SW_THREASHOLD = 3000;
 static const uint16_t LED_CONNECTION_THREASHOLD = 160;
