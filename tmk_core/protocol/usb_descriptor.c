@@ -191,17 +191,19 @@ const USB_Descriptor_HIDReport_Datatype_t PROGMEM SharedReport[] = {
 
     HID_RI_USAGE_PAGE(8, 0x0D),            // Digitizers
     HID_RI_USAGE(8, 0x05),                 // Touch Pad
+    HID_RI_LOGICAL_MINIMUM(8, 0),
+    HID_RI_PHYSICAL_MINIMUM(8, 0),
+    
     HID_RI_COLLECTION(8, 0x01),            // Application
         HID_RI_REPORT_ID(8, REPORT_ID_PRECISION_TOUCHPAD),
+        HID_RI_UNIT(8, 0x13),              /* Inch */
 
 #    define FINGER \
         HID_RI_USAGE(8, 0x22),             /* Finger */ \
         HID_RI_COLLECTION(8, 0x02),        /* Logical */ \
             HID_RI_USAGE(8, 0x47),             /* Touch Valid */ \
             HID_RI_USAGE(8, 0x42),             /* Tip Switch */ \
-            HID_RI_LOGICAL_MINIMUM(8, 0), \
             HID_RI_LOGICAL_MAXIMUM(8, 1), \
-            HID_RI_PHYSICAL_MINIMUM(8, 0), \
             HID_RI_PHYSICAL_MAXIMUM(8, 0), \
             HID_RI_REPORT_COUNT(8, 2), \
             HID_RI_REPORT_SIZE(8, 1), \
@@ -219,7 +221,6 @@ const USB_Descriptor_HIDReport_Datatype_t PROGMEM SharedReport[] = {
             HID_RI_INPUT(8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_ABSOLUTE), \
             HID_RI_USAGE_PAGE(8, 0x01),        /* Generic Desktop */ \
             HID_RI_USAGE(8, 0x30),             /* X */ \
-            HID_RI_UNIT(8, 0x13),              /* Inch */ \
             HID_RI_UNIT_EXPONENT(8, 0x0E),     /* UnitExponent(0.01) */ \
             HID_RI_PHYSICAL_MAXIMUM(16, (PRECISION_TRACKPAD_WIDTH_MM * 1000 * 4) / 254), \
             HID_RI_LOGICAL_MAXIMUM(16, PRECISION_TRACKPAD_RESOLITON_X), \
@@ -242,12 +243,10 @@ const USB_Descriptor_HIDReport_Datatype_t PROGMEM SharedReport[] = {
 #    undef FINGER
 
         HID_RI_USAGE(8, 0x56),             // Scan Time
-        HID_RI_PHYSICAL_MINIMUM(8, 0),
-        HID_RI_PHYSICAL_MAXIMUM(32, 65535),
+        HID_RI_PHYSICAL_MAXIMUM(32, 65535),  // value width should be 32-bit. Windows' bug.
         HID_RI_UNIT(16, 0x1001),           // Second
         HID_RI_UNIT_EXPONENT(8, 0x0C),     // UnitExponent(0.0001)
-        HID_RI_LOGICAL_MINIMUM(8, 0),
-        HID_RI_LOGICAL_MAXIMUM(32, 65535),
+        HID_RI_LOGICAL_MAXIMUM(32, 65535),  // value width should be 32-bit. Windows' bug.
         HID_RI_REPORT_COUNT(8, 1),
         HID_RI_REPORT_SIZE(8, 16),
         HID_RI_INPUT(8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_ABSOLUTE),
