@@ -29,9 +29,7 @@ static const uint32_t SLAVE_SUSPEND_THREASHOLD = 500;
 static volatile uint32_t last_i2c_transaction = 0U;
 #endif // SPLIT_KEYBOARD
 
-#ifdef RESERVED_D_WIRES
-#   define N_RESERVED_D_WIRES sizeof(RESERVED_D_WIRES) / sizeof(uint)
-#endif
+static bool cols_enabled[N_NORMAL_COLS] = {};
 
 static const uint16_t LED_SW_THREASHOLD = 3000;
 static const uint16_t LED_CONNECTION_THREASHOLD = 160;
@@ -146,19 +144,18 @@ void matrix_init_custom(void) {
         writePinLow(CP);
     }
     for (int i = 0; i < MATRIX_COLS; i ++) {
-        #ifdef RESERVED_D_WIRES
-        bool ignore = false;
-        for (int ii = 0; ii < N_RESERVED_D_WIRES; ii++) {
+        cols_enabled[i] = true;
+#ifdef RESERVED_D_WIRES
+        for (int ii = 0; ii < sizeof(RESERVED_D_WIRES) / sizeof(pin_t); ii++) {
             if (COLS[i] == RESERVED_D_WIRES[ii]) {
-                ignore = true;
+                cols_enabled[i] = false;
                 break;
             }
         }
-        if (ignore) {
-            continue;
+#endif
+        if (cols_enabled[i]) {
+            setPinInputLow(COLS[i]);
         }
-        #endif
-        setPinInputLow(COLS[i]);
     }
 
     memset((void *)MATRIX_LED_ONOFF, 0, sizeof(MATRIX_LED_ONOFF));
@@ -208,19 +205,7 @@ bool matrix_scan_custom(matrix_row_t raw_matrix[]) {
         matrix_row_t r = 0U;
         uint32_t all = palReadPort(0);
         for (int ii = 0; ii < MATRIX_COLS; ii++) {
-            #ifdef RESERVED_D_WIRES
-            bool ignore = false;
-            for (int iii = 0; iii < N_RESERVED_D_WIRES; iii++) {
-                if (COLS[ii] == RESERVED_D_WIRES[iii]) {
-                    ignore = true;
-                    break;
-                }
-            }
-            if (ignore) {
-                continue;
-            }
-            #endif
-            if ((1U << COLS[ii]) & all) {
+            if (cols_enabled[ii] && ((1U << COLS[ii]) & all)) {
                 r |= (1U << ii);
             }
         }

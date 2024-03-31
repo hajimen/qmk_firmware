@@ -115,10 +115,13 @@ bool azoteq_iqs5xx_refresh_report(void) {
 
         if (status == I2C_STATUS_SUCCESS) {
             // pt_dprintf("IQS5XX - previous cycle time: %d \n", base_data.previous_cycle_time);
-            if (base_data.previous_cycle_time == 0) {  // I don't know why, but it occurs and have invalid data.
-                pt_dprintf("IQS5XX - base_data.previous_cycle_time == 0 occurs.\n");
-                return false;
-            }
+
+            // no neeed if always EVENT_MODE on
+            // if (base_data.previous_cycle_time == 0) {  // I don't know why, but it occurs and have invalid data.
+            //     pt_dprintf("IQS5XX - base_data.previous_cycle_time == 0 occurs.\n");
+            //     return false;
+            // }
+
             read_error_count = 0;
             mouse_buttons_t mouse_buttons = {0};
             was_active = true;
