@@ -243,11 +243,11 @@ const USB_Descriptor_HIDReport_Datatype_t PROGMEM SharedReport[] = {
 
         HID_RI_USAGE(8, 0x56),             // Scan Time
         HID_RI_PHYSICAL_MINIMUM(8, 0),
-        HID_RI_PHYSICAL_MAXIMUM(16, 65535),
+        HID_RI_PHYSICAL_MAXIMUM(32, 65535),
         HID_RI_UNIT(16, 0x1001),           // Second
         HID_RI_UNIT_EXPONENT(8, 0x0C),     // UnitExponent(0.0001)
         HID_RI_LOGICAL_MINIMUM(8, 0),
-        HID_RI_LOGICAL_MAXIMUM(16, 65535),
+        HID_RI_LOGICAL_MAXIMUM(32, 65535),
         HID_RI_REPORT_COUNT(8, 1),
         HID_RI_REPORT_SIZE(8, 16),
         HID_RI_INPUT(8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_ABSOLUTE),
