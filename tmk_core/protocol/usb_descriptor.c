@@ -196,7 +196,7 @@ const USB_Descriptor_HIDReport_Datatype_t PROGMEM SharedReport[] = {
     
     HID_RI_COLLECTION(8, 0x01),            // Application
         HID_RI_REPORT_ID(8, REPORT_ID_PRECISION_TOUCHPAD),
-        HID_RI_UNIT(8, 0x13),              /* Inch */
+        HID_RI_UNIT(8, 0x11),              /* Centimeter */
 
 #    define FINGER \
         HID_RI_USAGE(8, 0x22),             /* Finger */ \
@@ -221,13 +221,13 @@ const USB_Descriptor_HIDReport_Datatype_t PROGMEM SharedReport[] = {
             HID_RI_INPUT(8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_ABSOLUTE), \
             HID_RI_USAGE_PAGE(8, 0x01),        /* Generic Desktop */ \
             HID_RI_USAGE(8, 0x30),             /* X */ \
-            HID_RI_UNIT_EXPONENT(8, 0x0E),     /* UnitExponent(0.01) */ \
-            HID_RI_PHYSICAL_MAXIMUM(16, (PRECISION_TRACKPAD_WIDTH_MM * 1000 * 4) / 254), \
+            HID_RI_UNIT_EXPONENT(8, 0x0F),     /* UnitExponent(0.1) */ \
+            HID_RI_PHYSICAL_MAXIMUM(16, PRECISION_TRACKPAD_WIDTH_MM), \
             HID_RI_LOGICAL_MAXIMUM(16, PRECISION_TRACKPAD_RESOLITON_X), \
             HID_RI_REPORT_SIZE(8, 16), \
             HID_RI_INPUT(8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_ABSOLUTE), \
             HID_RI_USAGE(8, 0x31),             /* Y */ \
-            HID_RI_PHYSICAL_MAXIMUM(16, (PRECISION_TRACKPAD_HEIGHT_MM * 1000 * 4) / 254), \
+            HID_RI_PHYSICAL_MAXIMUM(16, PRECISION_TRACKPAD_HEIGHT_MM), \
             HID_RI_LOGICAL_MAXIMUM(16, PRECISION_TRACKPAD_RESOLITON_Y), \
             HID_RI_INPUT(8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_ABSOLUTE), \
         HID_RI_END_COLLECTION(0), \
