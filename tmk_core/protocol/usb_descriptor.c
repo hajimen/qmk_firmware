@@ -254,17 +254,16 @@ const USB_Descriptor_HIDReport_Datatype_t PROGMEM SharedReport[] = {
 
         HID_RI_USAGE(8, 0x54),             // Contact Count
         HID_RI_LOGICAL_MAXIMUM(8, 127),
-        HID_RI_REPORT_SIZE(8, 8),
+        HID_RI_REPORT_SIZE(8, 7),
         HID_RI_INPUT(8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_ABSOLUTE),
 
+        // button is not used, but without it, Windows goes BSOD.
         HID_RI_USAGE_PAGE(8, 0x09),        // Button
         HID_RI_USAGE(8, 0x01),             // Button 1
         HID_RI_LOGICAL_MAXIMUM(8, 1),
         HID_RI_REPORT_COUNT(8, 1),
         HID_RI_REPORT_SIZE(8, 1),
         HID_RI_INPUT(8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_ABSOLUTE),
-        HID_RI_REPORT_SIZE(8, 7),
-        HID_RI_INPUT(8, HID_IOF_CONSTANT | HID_IOF_VARIABLE),
 
 
         HID_RI_REPORT_ID(8, REPORT_ID_PRECISION_TOUCHPAD_FEATURE),

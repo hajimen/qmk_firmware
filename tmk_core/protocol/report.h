@@ -238,8 +238,8 @@ typedef struct {
     uint8_t report_id;
     collection_precision_touchpad_contact_t contact[5];
     uint16_t scan_time;
-    uint8_t contact_count;
-    uint8_t reserved;
+    uint8_t contact_count : 7;
+    uint8_t reserved : 1;
     // no mechanical force because Azoteq IQS5xx doesn't have it.
 } PACKED report_precision_touchpad_t;
 
