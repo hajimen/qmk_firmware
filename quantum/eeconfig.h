@@ -22,7 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "eeprom.h"
 
 #ifndef EECONFIG_MAGIC_NUMBER
-#    define EECONFIG_MAGIC_NUMBER (uint16_t)0xFEE6 // When changing, decrement this value to avoid future re-init issues
+#    define EECONFIG_MAGIC_NUMBER (uint16_t)0xFEE5 // When changing, decrement this value to avoid future re-init issues
 #endif
 #define EECONFIG_MAGIC_NUMBER_OFF (uint16_t)0xFFFF
 
@@ -47,9 +47,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #define EECONFIG_HAPTIC (uint32_t *)32
 #define EECONFIG_RGBLIGHT_EXTENDED (uint8_t *)36
+#define EECONFIG_PRECISION_TOUCHPAD (uint8_t *)37
 
 // Size of EEPROM being used for core data storage
-#define EECONFIG_BASE_SIZE 37
+#define EECONFIG_BASE_SIZE 38
 
 // Size of EEPROM dedicated to keyboard- and user-specific data
 #ifndef EECONFIG_KB_DATA_SIZE
@@ -130,6 +131,11 @@ void     eeconfig_update_haptic(uint32_t val);
 
 bool eeconfig_read_handedness(void);
 void eeconfig_update_handedness(bool val);
+
+#ifdef PRECISION_TOUCHPAD_ENABLE
+uint8_t eeconfig_read_precision_touchpad(void);
+void    eeconfig_update_precision_touchpad(uint8_t val);
+#endif
 
 #if (EECONFIG_KB_DATA_SIZE) > 0
 bool eeconfig_is_kb_datablock_valid(void);

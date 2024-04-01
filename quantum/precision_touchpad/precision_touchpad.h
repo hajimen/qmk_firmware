@@ -28,8 +28,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 void           precision_touchpad_driver_init(void);
 report_precision_touchpad_t precision_touchpad_driver_get_precision_touchpad_report();
 report_mouse_t precision_touchpad_driver_get_fallback_mouse_report();
-uint16_t       precision_touchpad_driver_get_cpi(void);
-void           precision_touchpad_driver_set_cpi(uint16_t cpi);
 bool           precision_touchpad_driver_refresh_report();
 #endif
 
@@ -37,8 +35,6 @@ typedef struct {
     void (*init)(void);
     report_precision_touchpad_t (*get_precision_touchpad_report)(void);
     report_mouse_t (*get_fallback_mouse_report)(void);
-    void (*set_cpi)(uint16_t);
-    uint16_t (*get_cpi)(void);
     bool (*refresh_report)(void);
 } precision_touchpad_driver_t;
 
@@ -46,13 +42,16 @@ typedef struct {
 #define XY_REPORT_MAX INT8_MAX
 typedef int16_t clamp_range_t;
 
+#define PRECISION_TRACKPAD_WIDTH_MM_PLACEHOLDER 0xece7
+#define PRECISION_TRACKPAD_HEIGHT_MM_PLACEHOLDER 0x8f81
+
 void           precision_touchpad_init(void);
 bool           precision_touchpad_task(void);
 bool           precision_touchpad_send(void);
 report_precision_touchpad_t precision_touchpad_get_report(void);
 void           precision_touchpad_set_report(report_precision_touchpad_t precision_touchpad_report);
-uint16_t       precision_touchpad_get_cpi(void);
-void           precision_touchpad_set_cpi(uint16_t cpi);
+uint8_t        precision_touchpad_get_size_shifter(void);
+void           precision_touchpad_set_size_shifter(uint8_t shifer);
 
 void           precision_touchpad_init_kb(void);
 void           precision_touchpad_init_user(void);

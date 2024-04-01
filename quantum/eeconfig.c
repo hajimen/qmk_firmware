@@ -63,6 +63,7 @@ void eeconfig_init_quantum(void) {
     uint64_t dummy = 0;
     eeprom_update_block(&dummy, EECONFIG_RGB_MATRIX, sizeof(uint64_t));
     eeprom_update_dword(EECONFIG_HAPTIC, 0);
+    eeprom_update_byte(EECONFIG_PRECISION_TOUCHPAD, 0);
 #if defined(HAPTIC_ENABLE)
     haptic_reset();
 #endif
@@ -263,6 +264,21 @@ bool eeconfig_read_handedness(void) {
  */
 void eeconfig_update_handedness(bool val) {
     eeprom_update_byte(EECONFIG_HANDEDNESS, !!val);
+}
+
+/** \brief eeconfig read precision touchpad
+ *
+ * FIXME: needs doc
+ */
+uint8_t eeconfig_read_precision_touchpad(void) {
+    return eeprom_read_byte(EECONFIG_PRECISION_TOUCHPAD);
+}
+/** \brief eeconfig update precision touchpad
+ *
+ * FIXME: needs doc
+ */
+void eeconfig_update_precision_touchpad(uint8_t val) {
+    eeprom_update_byte(EECONFIG_PRECISION_TOUCHPAD, val);
 }
 
 #if (EECONFIG_KB_DATA_SIZE) > 0

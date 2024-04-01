@@ -20,6 +20,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <string.h>
 #include "timer.h"
 #include "gpio.h"
+#ifndef EEPROM_ENABLE
+#   error "Precision touchpad requires EEPROM_ENABLE"
+#endif
+#include "eeconfig.h"
+
+#ifndef PRECISION_TOUCHPAD_RDY_PIN
+#   error "Precision touchpad requires PRECISION_TOUCHPAD_RDY_PIN"
+#endif
+
+#define EECONFIG_PRECISION_TOUCHPAD_SHIFTER_MASK 0x03U
 
 static report_mouse_t local_mouse_report  = {0};
 static report_precision_touchpad_t local_precision_touchpad_report = {0};
@@ -94,6 +104,9 @@ __attribute__((weak)) report_mouse_t precision_touchpad_fallback_mouse_task_user
  * Initialises precision touchpad, perform driver init and optional keyboard/user level code.
  */
 __attribute__((weak)) void precision_touchpad_init(void) {
+    if (!eeconfig_is_enabled()) {
+        eeconfig_init();
+    }
     {
         precision_touchpad_driver.init();
         palSetLineMode(PRECISION_TOUCHPAD_RDY_PIN, PAL_MODE_INPUT);
@@ -168,7 +181,7 @@ report_precision_touchpad_t precision_touchpad_get_report(void) {
 /**
  * @brief Sets precision touchpad report used be precision touchpad task
  *
- * @param[in] precision_touchpad_report
+ * @param[in] precision_touchpad_report report_precision_touchpad_t
  */
 void precision_touchpad_set_report(report_precision_touchpad_t precision_touchpad_report) {
     precision_touchpad_force_send = has_precision_touchpad_report_changed(&local_precision_touchpad_report, &precision_touchpad_report);
@@ -176,25 +189,23 @@ void precision_touchpad_set_report(report_precision_touchpad_t precision_touchpa
 }
 
 /**
- * @brief Gets current precision touchpad CPI if supported
+ * @brief Sets precision touchpad size shifter
  *
- * Gets current cpi from precision touchpad driver if supported and returns it as uint16_t
- *
- * @return cpi value as uint16_t
+ * @param[in] shifter uint8_t
  */
-uint16_t precision_touchpad_get_cpi(void) {
-    return precision_touchpad_driver.get_cpi();
+void precision_touchpad_set_size_shifter(uint8_t shifer) {
+    shifer &= EECONFIG_PRECISION_TOUCHPAD_SHIFTER_MASK;
+    uint8_t v = eeconfig_read_precision_touchpad() & (~EECONFIG_PRECISION_TOUCHPAD_SHIFTER_MASK);
+    eeconfig_update_precision_touchpad(v | shifer);
 }
 
 /**
- * @brief Set precision touchpad CPI if supported
+ * @brief Gets current precision touchpad size shifter
  *
- * Takes a uint16_t value to set precision touchpad cpi if supported by driver.
- *
- * @param[in] cpi uint16_t value.
+ * @return uint8_t
  */
-void precision_touchpad_set_cpi(uint16_t cpi) {
-    precision_touchpad_driver.set_cpi(cpi);
+uint8_t precision_touchpad_get_size_shifter(void) {
+    return eeconfig_read_precision_touchpad() & EECONFIG_PRECISION_TOUCHPAD_SHIFTER_MASK;
 }
 
 /**

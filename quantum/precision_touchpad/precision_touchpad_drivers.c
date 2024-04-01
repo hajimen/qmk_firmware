@@ -235,8 +235,6 @@ const precision_touchpad_driver_t precision_touchpad_driver = {
     .init       = azoteq_iqs5xx_init,
     .get_precision_touchpad_report = azoteq_iqs5xx_get_precision_touchpad_report,
     .get_fallback_mouse_report = azoteq_iqs5xx_get_fallback_mouse_report,
-    .set_cpi    = azoteq_iqs5xx_set_cpi,
-    .get_cpi    = azoteq_iqs5xx_get_cpi,
     .refresh_report = azoteq_iqs5xx_refresh_report
 };
 // clang-format on
@@ -248,10 +246,6 @@ __attribute__((weak)) report_precision_touchpad_t precision_touchpad_driver_get_
 __attribute__((weak)) report_mouse_t precision_touchpad_driver_get_fallback_mouse_report() {
     return local_mouse_report;
 }
-__attribute__((weak)) uint16_t precision_touchpad_driver_get_cpi(void) {
-    return 0;
-}
-__attribute__((weak)) void precision_touchpad_driver_set_cpi(uint16_t cpi) {}
 __attribute__((weak)) bool precision_touchpad_driver_refresh_report() {
     return false;
 }

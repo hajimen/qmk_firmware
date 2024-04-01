@@ -115,7 +115,7 @@ const USB_Descriptor_HIDReport_Datatype_t PROGMEM KeyboardReport[] = {
 #    ifndef MOUSE_SHARED_EP
 const USB_Descriptor_HIDReport_Datatype_t PROGMEM MouseReport[] = {
 #    elif !defined(SHARED_REPORT_STARTED)
-const USB_Descriptor_HIDReport_Datatype_t PROGMEM SharedReport[] = {
+USB_Descriptor_HIDReport_Datatype_t PROGMEM SharedReport[] = {
 #        define SHARED_REPORT_STARTED
 #    endif
     HID_RI_USAGE_PAGE(8, 0x01),            // Generic Desktop
@@ -222,12 +222,12 @@ const USB_Descriptor_HIDReport_Datatype_t PROGMEM SharedReport[] = {
             HID_RI_USAGE_PAGE(8, 0x01),        /* Generic Desktop */ \
             HID_RI_USAGE(8, 0x30),             /* X */ \
             HID_RI_UNIT_EXPONENT(8, 0x0F),     /* UnitExponent(0.1) */ \
-            HID_RI_PHYSICAL_MAXIMUM(16, PRECISION_TRACKPAD_WIDTH_MM), \
+            HID_RI_PHYSICAL_MAXIMUM(16, PRECISION_TRACKPAD_WIDTH_MM_PLACEHOLDER), \
             HID_RI_LOGICAL_MAXIMUM(16, PRECISION_TRACKPAD_RESOLITON_X), \
             HID_RI_REPORT_SIZE(8, 16), \
             HID_RI_INPUT(8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_ABSOLUTE), \
             HID_RI_USAGE(8, 0x31),             /* Y */ \
-            HID_RI_PHYSICAL_MAXIMUM(16, PRECISION_TRACKPAD_HEIGHT_MM), \
+            HID_RI_PHYSICAL_MAXIMUM(16, PRECISION_TRACKPAD_HEIGHT_MM_PLACEHOLDER), \
             HID_RI_LOGICAL_MAXIMUM(16, PRECISION_TRACKPAD_RESOLITON_Y), \
             HID_RI_INPUT(8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_ABSOLUTE), \
         HID_RI_END_COLLECTION(0), \
@@ -1247,6 +1247,30 @@ uint16_t get_usb_descriptor(const uint16_t wValue, const uint16_t wIndex, const 
     const uint8_t DescriptorIndex = (wValue & 0xFF);
     const void*   Address         = NULL;
     uint16_t      Size            = NO_DESCRIPTOR;
+#ifdef PRECISION_TOUCHPAD_ENABLE
+    uint8_t shifter = precision_touchpad_get_size_shifter();
+    union {
+        uint16_t v;
+        struct {
+            uint8_t h;
+            uint8_t l;
+        } hl;
+    } u;
+    for (int i = 0; i + 1 < sizeof(SharedReport); i++) {
+        u.hl.h = SharedReport[i];
+        u.hl.l = SharedReport[i + 1];
+        if (u.v == PRECISION_TRACKPAD_HEIGHT_MM_PLACEHOLDER) {
+            u.v = PRECISION_TRACKPAD_HEIGHT_MM << shifter;
+            SharedReport[i] = u.hl.h;
+            SharedReport[i + 1] = u.hl.l;
+        }
+        if (u.v == PRECISION_TRACKPAD_WIDTH_MM_PLACEHOLDER) {
+            u.v = PRECISION_TRACKPAD_WIDTH_MM << shifter;
+            SharedReport[i] = u.hl.h;
+            SharedReport[i + 1] = u.hl.l;
+        }
+    }
+#endif
 
     switch (DescriptorType) {
         case DTYPE_Device:
