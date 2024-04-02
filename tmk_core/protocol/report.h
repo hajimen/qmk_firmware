@@ -234,6 +234,8 @@ typedef struct {
     // no width / height / azimuth because Azoteq IQS5xx doesn't have it.
 } PACKED collection_precision_touchpad_contact_t;
 
+_Static_assert(sizeof(collection_precision_touchpad_contact_t) == 7);
+
 typedef struct {
     uint8_t report_id;
     collection_precision_touchpad_contact_t contact[5];
@@ -242,6 +244,8 @@ typedef struct {
     uint8_t reserved : 1;
     // no mechanical force because Azoteq IQS5xx doesn't have it.
 } PACKED report_precision_touchpad_t;
+
+_Static_assert(sizeof(report_precision_touchpad_t) == 39);
 
 typedef struct {
     uint8_t report_id;

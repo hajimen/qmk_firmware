@@ -95,15 +95,13 @@ bool azoteq_iqs5xx_refresh_report(void) {
 
     if (azoteq_iqs5xx_init_status == I2C_STATUS_SUCCESS) {
         if (!palReadLine(PRECISION_TOUCHPAD_RDY_PIN)) {
+            if (precision_touchpad_input_mode_touchpad) {
+                return false;
+            }
             if (was_active) {
                 pt_dprintf("IQS5XX - was_active occurs.\n");
                 was_active = false;
                 local_mouse_report = temp_mouse_report;
-                if (local_precision_touchpad_report.contact_count > 0) {
-                    pt_dprintf("IQS5XX - was_active and contact_count > 0 occurs.\n");
-                    local_precision_touchpad_report.scan_time++;
-                    local_precision_touchpad_report.contact_count = 0;
-                }
                 return true;
             }
             return false;
