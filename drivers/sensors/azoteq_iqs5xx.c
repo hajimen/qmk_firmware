@@ -4,8 +4,8 @@
 
 #include <string.h>
 #include "azoteq_iqs5xx.h"
-#include "wait.h"
 #include "pointing_device_internal.h"
+#include "wait.h"
 
 #ifndef AZOTEQ_IQS5XX_ADDRESS
 #    define AZOTEQ_IQS5XX_ADDRESS (0x74 << 1)
