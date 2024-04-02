@@ -178,8 +178,7 @@ bool azoteq_iqs5xx_refresh_report(void) {
             for (uint8_t i = 0; i < 5; i++) {
                 azoteq_iqs5xx_finger_data_t *f = &(precision_touchpad_data.finger[i]);
                 collection_precision_touchpad_contact_t *c = &(temp_precision_touchpad_report.contact[ii]);
-                c->pressure = AZOTEQ_IQS5XX_SWAP_H_L_BYTES(f->touch_strength);
-                c->tip = c->pressure > 0;
+                c->tip = AZOTEQ_IQS5XX_SWAP_H_L_BYTES(f->touch_strength) > 0;
                 if (!c->tip && !active_finger[i]) {
                     continue;
                 }

@@ -215,10 +215,11 @@ const USB_Descriptor_HIDReport_Datatype_t PROGMEM SharedReport[] = {
             HID_RI_INPUT(8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_ABSOLUTE), \
             HID_RI_REPORT_SIZE(8, 2), \
             HID_RI_INPUT(8, HID_IOF_CONSTANT | HID_IOF_VARIABLE), \
-            HID_RI_USAGE(8, 0x30),             /* Tip Pressure */ \
-            HID_RI_LOGICAL_MAXIMUM(16, 65535), \
-            HID_RI_REPORT_SIZE(8, 16), \
-            HID_RI_INPUT(8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_ABSOLUTE), \
+            /* Tip Pressure makes Linux kernel paralysed. If you enable it, don't forget to make SHARED_EPSIZE 64 */ \
+            /* HID_RI_USAGE(8, 0x30),             /* Tip Pressure */ \
+            /* HID_RI_LOGICAL_MAXIMUM(16, 65535), */ \
+            /* HID_RI_REPORT_SIZE(8, 16), */ \
+            /* HID_RI_INPUT(8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_ABSOLUTE), */ \
             HID_RI_USAGE_PAGE(8, 0x01),        /* Generic Desktop */ \
             HID_RI_USAGE(8, 0x30),             /* X */ \
             HID_RI_UNIT_EXPONENT(8, 0x0F),     /* UnitExponent(0.1) */ \

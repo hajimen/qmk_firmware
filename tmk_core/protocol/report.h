@@ -227,14 +227,15 @@ typedef struct {
     uint8_t contact_id : 4;
     uint8_t  reserved : 2;
 
-    uint16_t pressure;  // In USB HID, this is "Tip Pressure". In Windows Precision Touchpad, this is "Pressure".
+    // pressure makes Linux kernel paralysed.
+    // uint16_t pressure;  // In USB HID, this is "Tip Pressure". In Windows Precision Touchpad, this is "Pressure".
 
     uint16_t x;
     uint16_t y;
     // no width / height / azimuth because Azoteq IQS5xx doesn't have it.
 } PACKED collection_precision_touchpad_contact_t;
 
-_Static_assert(sizeof(collection_precision_touchpad_contact_t) == 7);
+_Static_assert(sizeof(collection_precision_touchpad_contact_t) == 5);
 
 typedef struct {
     uint8_t report_id;
@@ -245,7 +246,7 @@ typedef struct {
     // no mechanical force because Azoteq IQS5xx doesn't have it.
 } PACKED report_precision_touchpad_t;
 
-_Static_assert(sizeof(report_precision_touchpad_t) == 39);
+_Static_assert(sizeof(report_precision_touchpad_t) == 29);
 
 typedef struct {
     uint8_t report_id;
