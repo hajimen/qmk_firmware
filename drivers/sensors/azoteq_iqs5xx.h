@@ -66,7 +66,7 @@ typedef struct PACKED {
 typedef struct {
     uint8_t h : 8;
     uint8_t l : 8;
-} PACKED azoteq_iqs5xx_relative_xy_t;
+} azoteq_iqs5xx_relative_xy_t;
 
 typedef struct {
     uint8_t                          previous_cycle_time;
