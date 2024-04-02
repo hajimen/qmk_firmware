@@ -42,9 +42,6 @@ typedef struct {
 #define XY_REPORT_MAX INT8_MAX
 typedef int16_t clamp_range_t;
 
-#define PRECISION_TRACKPAD_WIDTH_MM_PLACEHOLDER 0xece7
-#define PRECISION_TRACKPAD_HEIGHT_MM_PLACEHOLDER 0x8f81
-
 void           precision_touchpad_init(void);
 bool           precision_touchpad_task(void);
 bool           precision_touchpad_send(void);

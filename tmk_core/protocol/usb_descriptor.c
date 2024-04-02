@@ -51,6 +51,8 @@
 
 #ifdef PRECISION_TOUCHPAD_ENABLE
 #    include "precision_touchpad.h"
+#    define PRECISION_TRACKPAD_WIDTH_MM_PLACEHOLDER 0xece7
+#    define PRECISION_TRACKPAD_HEIGHT_MM_PLACEHOLDER 0x8f81
 #endif
 
 // clang-format off
