@@ -9,7 +9,7 @@
 
 #define WS2812_DI_PIN A7
 // #ifdef RGB_DI_PIN
-#define RGBLED_NUM 3
+#define RGBLIGHT_LED_COUNT 3
 //   #define RGBLIGHT_HUE_STEP 8
 //   #define RGBLIGHT_SAT_STEP 8
 //   #define RGBLIGHT_VAL_STEP 8

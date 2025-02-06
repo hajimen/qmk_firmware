@@ -57,7 +57,7 @@ typedef union {
 static i2c_status_t azoteq_iqs5xx_init_status = 1;
 static uint16_t scan_time = 0;
 
-void azoteq_iqs5xx_init(void) {
+void precision_touchpad_azoteq_iqs5xx_init(void) {
     i2c_init();
     azoteq_iqs5xx_wake();
     azoteq_iqs5xx_reset_suspend(true, false, true);
@@ -229,7 +229,7 @@ report_mouse_t azoteq_iqs5xx_get_fallback_mouse_report(void) {
 
 // clang-format off
 const precision_touchpad_driver_t precision_touchpad_driver = {
-    .init       = azoteq_iqs5xx_init,
+    .init       = precision_touchpad_azoteq_iqs5xx_init,
     .get_precision_touchpad_report = azoteq_iqs5xx_get_precision_touchpad_report,
     .get_fallback_mouse_report = azoteq_iqs5xx_get_fallback_mouse_report,
     .refresh_report = azoteq_iqs5xx_refresh_report

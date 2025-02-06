@@ -5,7 +5,7 @@
 #pragma once
 
 #include "i2c_master.h"
-#include "report.h"
+#include "pointing_device.h"
 #include "util.h"
 
 typedef enum {
@@ -207,6 +207,8 @@ typedef struct {
 #define PRECISION_TRACKPAD_RESOLITON_Y AZOTEQ_IQS5XX_RESOLUTION_Y
 #define PRECISION_TRACKPAD_WIDTH_MM AZOTEQ_IQS5XX_WIDTH_MM
 #define PRECISION_TRACKPAD_HEIGHT_MM AZOTEQ_IQS5XX_HEIGHT_MM
+
+const pointing_device_driver_t azoteq_iqs5xx_pointing_device_driver;
 
 void           azoteq_iqs5xx_init(void);
 i2c_status_t   azoteq_iqs5xx_wake(void);

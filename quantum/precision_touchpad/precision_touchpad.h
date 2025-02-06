@@ -26,9 +26,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #    include "drivers/sensors/azoteq_iqs5xx.h"
 #else
 void           precision_touchpad_driver_init(void);
-report_precision_touchpad_t precision_touchpad_driver_get_precision_touchpad_report();
-report_mouse_t precision_touchpad_driver_get_fallback_mouse_report();
-bool           precision_touchpad_driver_refresh_report();
+report_precision_touchpad_t precision_touchpad_driver_get_precision_touchpad_report(void);
+report_mouse_t precision_touchpad_driver_get_fallback_mouse_report(void);
+bool           precision_touchpad_driver_refresh_report(void);
 #endif
 
 typedef struct {
