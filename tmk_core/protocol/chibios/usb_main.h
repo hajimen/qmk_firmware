@@ -67,14 +67,3 @@ int8_t sendchar(uint8_t c);
 bool virtser_usb_request_cb(USBDriver *usbp);
 
 #endif
-
-/* --------------
- * Precision touchpad header
- * --------------
- */
-
-#if defined(PRECISION_TOUCHPAD_ENABLE)
-
-bool precision_touchpad_usb_request_cb(USBDriver *usbp);
-
-#endif

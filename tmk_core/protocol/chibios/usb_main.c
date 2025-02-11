@@ -64,6 +64,7 @@ report_precision_touchpad_device_capability_t precision_touchpad_device_capabili
 extern bool precision_touchpad_input_mode_touchpad;
 extern bool precision_touchpad_surface_switch_enabled;
 extern bool precision_touchpad_button_switch_enabled;
+static bool precision_touchpad_usb_request_cb(USBDriver *usbp);
 #endif
 
 static bool __attribute__((__unused__)) send_report_buffered(usb_endpoint_in_lut_t endpoint, void *report, size_t size);
@@ -292,6 +293,11 @@ static bool usb_requests_hook_cb(USBDriver *usbp) {
             case USB_RTYPE_DIR_DEV2HOST:
                 switch (setup->bRequest) {
                     case HID_REQ_GetReport:
+#    ifdef PRECISION_TOUCHPAD_ENABLE
+                        if (setup->wIndex == SHARED_INTERFACE && precision_touchpad_usb_request_cb(usbp)) {
+                            return true;
+                        }
+#    endif
                         return usb_get_report_cb(usbp);
                     case HID_REQ_GetProtocol:
                         if (setup->wIndex == KEYBOARD_INTERFACE) {
@@ -654,45 +660,38 @@ void virtser_task(void) {
 
 #ifdef PRECISION_TOUCHPAD_ENABLE
 
-bool precision_touchpad_usb_request_cb(USBDriver *usbp) {
+static bool precision_touchpad_usb_request_cb(USBDriver *usbp) {
     usb_control_request_t *setup = (usb_control_request_t *)usbp->setup;
 
     /* Handle HID class specific requests */
-    if ((setup->bmRequestType & (USB_RTYPE_TYPE_MASK | USB_RTYPE_RECIPIENT_MASK)) == (USB_RTYPE_TYPE_CLASS | USB_RTYPE_RECIPIENT_INTERFACE)) {
-        if ((setup->bmRequestType & USB_RTYPE_DIR_MASK) == USB_RTYPE_DIR_DEV2HOST && setup->bRequest == HID_REQ_GetReport && setup->wIndex == SHARED_INTERFACE) {
-            if (setup->wValue.lbyte == REPORT_ID_PRECISION_TOUCHPAD) {
-                usbSetupTransfer(usbp, (uint8_t *)&precision_touchpad_report_sent, sizeof(precision_touchpad_report_sent), NULL);
-                return true;
-            }
-            if (setup->wValue.lbyte == REPORT_ID_PRECISION_TOUCHPAD_CAPABILITY) {
-                usbSetupTransfer(usbp, (uint8_t *)&precision_touchpad_device_capability_report, sizeof(precision_touchpad_device_capability_report), NULL);
-                return true;
-            }
-            if (setup->wValue.lbyte == REPORT_ID_PRECISION_TOUCHPAD_CERTIFICATION) {
-                report_precision_touchpad_device_certification_status_t r = {
-                    .report_id = REPORT_ID_PRECISION_TOUCHPAD_CERTIFICATION
-                };
-                usbSetupTransfer(usbp, (uint8_t *)&r, sizeof(r), NULL);
-                return true;
-            }
-            if (setup->wValue.lbyte == REPORT_ID_PRECISION_TOUCHPAD_INPUT_MODE) {
-                report_precision_touchpad_device_input_mode_t r = {
-                    .report_id = REPORT_ID_PRECISION_TOUCHPAD_INPUT_MODE,
-                    .input_mode = precision_touchpad_input_mode_touchpad ? 3 : 0
-                };
-                usbSetupTransfer(usbp, (uint8_t *)&r, sizeof(r), NULL);
-                return true;
-            }
-            if (setup->wValue.lbyte == REPORT_ID_PRECISION_TOUCHPAD_SELECTIVE_REPORTING) {
-                report_precision_touchpad_device_selective_reporting_t r = {
-                    .report_id = REPORT_ID_PRECISION_TOUCHPAD_SELECTIVE_REPORTING,
-                    .surface_switch = precision_touchpad_surface_switch_enabled,
-                    .button_switch = precision_touchpad_button_switch_enabled
-                };
-                usbSetupTransfer(usbp, (uint8_t *)&r, sizeof(r), NULL);
-                return true;
-            }
-        }
+    switch (setup->wValue.lbyte) {
+        case REPORT_ID_PRECISION_TOUCHPAD:
+            usbSetupTransfer(usbp, (uint8_t *)&precision_touchpad_report_sent, sizeof(precision_touchpad_report_sent), NULL);
+            return true;
+        case REPORT_ID_PRECISION_TOUCHPAD_CAPABILITY:
+            usbSetupTransfer(usbp, (uint8_t *)&precision_touchpad_device_capability_report, sizeof(precision_touchpad_device_capability_report), NULL);
+            return true;
+        case REPORT_ID_PRECISION_TOUCHPAD_CERTIFICATION:
+            report_precision_touchpad_device_certification_status_t r0 = {
+                .report_id = REPORT_ID_PRECISION_TOUCHPAD_CERTIFICATION
+            };
+            usbSetupTransfer(usbp, (uint8_t *)&r0, sizeof(r0), NULL);
+            return true;
+        case REPORT_ID_PRECISION_TOUCHPAD_INPUT_MODE:
+            report_precision_touchpad_device_input_mode_t r1 = {
+                .report_id = REPORT_ID_PRECISION_TOUCHPAD_INPUT_MODE,
+                .input_mode = precision_touchpad_input_mode_touchpad ? 3 : 0
+            };
+            usbSetupTransfer(usbp, (uint8_t *)&r1, sizeof(r1), NULL);
+            return true;
+        case REPORT_ID_PRECISION_TOUCHPAD_SELECTIVE_REPORTING:
+            report_precision_touchpad_device_selective_reporting_t r2 = {
+                .report_id = REPORT_ID_PRECISION_TOUCHPAD_SELECTIVE_REPORTING,
+                .surface_switch = precision_touchpad_surface_switch_enabled,
+                .button_switch = precision_touchpad_button_switch_enabled
+            };
+            usbSetupTransfer(usbp, (uint8_t *)&r2, sizeof(r2), NULL);
+            return true;
     }
     return false;
 }

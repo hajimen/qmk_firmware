@@ -7,3 +7,8 @@ CONSOLE_ENABLE = yes
 MOUSEKEY_ENABLE = no
 EXTRAKEY_ENABLE = no
 NKRO_ENABLE = no
+# # Enable debug information in the final binaries
+# DEBUG_ENABLE = yes
+# # Disable optimisations for debugging purposes
+# LTO_ENABLE = no
+# OPT = g
